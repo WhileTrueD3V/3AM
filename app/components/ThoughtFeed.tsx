@@ -40,8 +40,8 @@ export function ThoughtFeed() {
           : thoughts.length === 0
           ? (
             <div style={{ textAlign: "center", padding: "80px 0" }}>
-              <p style={{ fontSize: 16, color: "#333", fontWeight: 500 }}>Nothing here yet.</p>
-              <p style={{ fontSize: 13, color: "#2a2a2a", marginTop: 6 }}>Leave the first thought of the night.</p>
+              <p style={{ fontSize: 16, color: "#888", fontWeight: 500 }}>Nothing here yet.</p>
+              <p style={{ fontSize: 13, color: "#555", marginTop: 6 }}>Leave the first thought of the night.</p>
             </div>
           )
           : thoughts.map((t, i) => <ThoughtCard key={t.id} thought={t} index={i} />)

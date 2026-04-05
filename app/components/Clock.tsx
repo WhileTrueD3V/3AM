@@ -12,7 +12,7 @@ export function Clock() {
     return () => clearInterval(id);
   }, []);
   return (
-    <span style={{ fontSize: 13, color: "#555", fontVariantNumeric: "tabular-nums", letterSpacing: "0.01em" }}>
+    <span style={{ fontSize: 13, color: "#888", fontVariantNumeric: "tabular-nums", letterSpacing: "0.01em" }}>
       {time}
     </span>
   );
