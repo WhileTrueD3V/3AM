@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Thought {
+  id        String   @id @default(cuid())
+  content   String
+  sameCount Int      @default(0)
+  createdAt DateTime @default(now())
+  ipHash    String
+
+  sames     Same[]
+}
+
+model Same {
+  id        String   @id @default(cuid())
+  thoughtId String
+  ipHash    String
+  createdAt DateTime @default(now())
+
+  thought   Thought  @relation(fields: [thoughtId], references: [id], onDelete: Cascade)
+
+  @@unique([thoughtId, ipHash])
+}
