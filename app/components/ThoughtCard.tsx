@@ -48,7 +48,7 @@ export function ThoughtCard({ thought, index }: { thought: Thought; index: numbe
       </p>
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 14 }}>
-        <span style={{ fontSize: 12, color: "#444" }}>
+        <span style={{ fontSize: 12, color: "#666" }}>
           {timeAgo(thought.createdAt)}
         </span>
 
@@ -59,13 +59,13 @@ export function ThoughtCard({ thought, index }: { thought: Thought; index: numbe
             display: "flex",
             alignItems: "center",
             gap: 6,
-            background: samed ? "rgba(251,191,36,0.1)" : "rgba(255,255,255,0.04)",
-            border: `1px solid ${samed ? "rgba(251,191,36,0.25)" : "rgba(255,255,255,0.08)"}`,
+            background: samed ? "rgba(251,191,36,0.12)" : "rgba(255,255,255,0.07)",
+            border: `1px solid ${samed ? "rgba(251,191,36,0.35)" : "rgba(255,255,255,0.14)"}`,
             borderRadius: 100,
             padding: "5px 12px 5px 10px",
             cursor: samed ? "default" : "pointer",
             transition: "all 0.2s",
-            color: samed ? "#FBBF24" : "#555",
+            color: samed ? "#FBBF24" : "#999",
             fontSize: 12,
             fontFamily: "inherit",
           }}
