@@ -6,22 +6,20 @@ const MAX = 200;
 
 type Props = {
   onClose: () => void;
-  onSubmitted: (thought: { id: string; content: string; sameCount: number; createdAt: string; hasSamed: boolean }) => void;
+  onSubmitted: (t: { id: string; content: string; sameCount: number; createdAt: string; hasSamed: boolean }) => void;
 };
 
 export function SubmitModal({ onClose, onSubmitted }: Props) {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const ref = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    textareaRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    ref.current?.focus();
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
   }, [onClose]);
 
   const submit = useCallback(async () => {
@@ -29,89 +27,103 @@ export function SubmitModal({ onClose, onSubmitted }: Props) {
     if (!trimmed || loading) return;
     setLoading(true);
     setError("");
-
     try {
       const res = await fetch("/api/thoughts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content: trimmed }),
       });
-
       if (res.status === 429) {
         setError("you've already left one tonight. come back later.");
         setLoading(false);
         return;
       }
       if (!res.ok) throw new Error();
-
-      const thought = await res.json();
-      onSubmitted(thought);
+      onSubmitted(await res.json());
       onClose();
     } catch {
-      setError("something went wrong. try again.");
+      setError("something went wrong.");
       setLoading(false);
     }
   }, [text, loading, onSubmitted, onClose]);
 
-  const handleKey = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submit();
-    },
-    [submit]
-  );
-
-  const remaining = MAX - text.length;
-
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 backdrop-in"
-      style={{ background: "rgba(7,8,15,0.85)", backdropFilter: "blur(6px)" }}
-      onClick={(e) => e.target === e.currentTarget && onClose()}
+      onClick={e => e.target === e.currentTarget && onClose()}
+      style={{
+        position: "fixed", inset: 0, zIndex: 50,
+        display: "flex", alignItems: "flex-end", justifyContent: "center",
+        padding: 16,
+        background: "rgba(4,5,10,0.80)",
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
+      }}
     >
-      <div className="modal-up w-full max-w-lg bg-[#0e1018] border border-[#1c1f2e] rounded-2xl p-6 space-y-4">
-        <div className="space-y-1">
-          <p className="text-[#e4dfd6] text-sm opacity-60">
-            what&apos;s on your mind?
-          </p>
-          <p className="text-[#2a2f45] text-xs">
-            anonymous. no account. just leave it here.
-          </p>
-        </div>
+      <div
+        className="modal-in"
+        style={{
+          width: "100%",
+          maxWidth: 520,
+          background: "#0d0f1a",
+          border: "1px solid rgba(255,255,255,0.08)",
+          borderRadius: 20,
+          padding: "24px 24px 20px",
+        }}
+      >
+        <p style={{ color: "rgba(255,255,255,0.35)", fontSize: 12, margin: "0 0 16px", letterSpacing: "0.05em" }}>
+          what&apos;s keeping you up?
+        </p>
 
         <textarea
-          ref={textareaRef}
+          ref={ref}
           value={text}
-          onChange={(e) => setText(e.target.value.slice(0, MAX))}
-          onKeyDown={handleKey}
+          onChange={e => setText(e.target.value.slice(0, MAX))}
+          onKeyDown={e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submit(); }}
           placeholder="i keep thinking about..."
           rows={4}
-          className="w-full bg-transparent text-[#e4dfd6] text-base font-light leading-relaxed placeholder-[#2a2f45] resize-none outline-none"
+          style={{
+            width: "100%",
+            background: "transparent",
+            border: "none",
+            outline: "none",
+            resize: "none",
+            color: "rgba(255,255,255,0.82)",
+            fontSize: 15,
+            fontWeight: 300,
+            lineHeight: 1.7,
+            fontFamily: "inherit",
+          }}
         />
 
         {error && (
-          <p className="text-[#7c6af7] text-xs opacity-80">{error}</p>
+          <p style={{ color: "rgba(168,148,255,0.75)", fontSize: 11, margin: "8px 0 0" }}>{error}</p>
         )}
 
-        <div className="flex items-center justify-between pt-1">
-          <span
-            className={`text-xs tabular-nums ${
-              remaining < 20 ? "text-[#7c6af7]" : "text-[#2a2f45]"
-            }`}
-          >
-            {remaining}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 16, paddingTop: 16, borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+          <span style={{ fontSize: 11, color: MAX - text.length < 20 ? "rgba(168,148,255,0.8)" : "rgba(255,255,255,0.18)" }}>
+            {MAX - text.length}
           </span>
-
-          <div className="flex items-center gap-3">
+          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
             <button
               onClick={onClose}
-              className="text-xs text-[#2a2f45] hover:text-[#4a5068] transition-colors cursor-pointer"
+              style={{ background: "none", border: "none", color: "rgba(255,255,255,0.25)", fontSize: 12, cursor: "pointer", padding: "6px 0" }}
             >
               nevermind
             </button>
             <button
               onClick={submit}
               disabled={!text.trim() || loading}
-              className="text-xs px-4 py-2 rounded-full bg-[#7c6af7] text-white disabled:opacity-30 hover:bg-[#6b5ae0] transition-all cursor-pointer disabled:cursor-not-allowed"
+              style={{
+                padding: "8px 18px",
+                borderRadius: 100,
+                border: "none",
+                background: text.trim() && !loading ? "rgba(168,148,255,0.85)" : "rgba(168,148,255,0.20)",
+                color: text.trim() && !loading ? "#fff" : "rgba(255,255,255,0.30)",
+                fontSize: 12,
+                cursor: text.trim() && !loading ? "pointer" : "not-allowed",
+                transition: "all 0.2s",
+                fontFamily: "inherit",
+              }}
             >
               {loading ? "leaving it..." : "leave it here"}
             </button>

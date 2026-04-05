@@ -12,6 +12,15 @@ type Thought = {
   hasSamed: boolean;
 };
 
+function SkeletonCard() {
+  return (
+    <div style={{ padding: "28px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+      <div className="skeleton" style={{ height: 14, width: "78%", marginBottom: 10 }} />
+      <div className="skeleton" style={{ height: 14, width: "45%" }} />
+    </div>
+  );
+}
+
 export function ThoughtFeed() {
   const [thoughts, setThoughts] = useState<Thought[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,67 +28,91 @@ export function ThoughtFeed() {
 
   useEffect(() => {
     fetch("/api/thoughts")
-      .then((r) => r.json())
-      .then((data) => {
-        setThoughts(data);
-        setLoading(false);
-      })
+      .then(r => r.json())
+      .then(data => { setThoughts(data); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
 
-  const handleSubmitted = useCallback((thought: Thought) => {
-    setThoughts((prev) => [thought, ...prev]);
+  const handleSubmitted = useCallback((t: Thought) => {
+    setThoughts(prev => [t, ...prev]);
   }, []);
-
-  if (loading) {
-    return (
-      <div className="flex flex-col gap-7 mt-8">
-        {[...Array(5)].map((_, i) => (
-          <div key={i} className="py-7 border-b border-[#1c1f2e] space-y-3">
-            <div
-              className="h-4 rounded-full bg-[#1c1f2e] animate-pulse"
-              style={{ width: `${60 + Math.random() * 30}%` }}
-            />
-            <div className="h-4 rounded-full bg-[#1c1f2e] animate-pulse w-2/5" />
-          </div>
-        ))}
-      </div>
-    );
-  }
 
   return (
     <>
-      {/* Empty state */}
-      {thoughts.length === 0 && (
-        <div className="text-center py-20 space-y-3">
-          <p className="text-[#2a2f45] text-sm">no thoughts yet tonight.</p>
-          <p className="text-[#2a2f45] text-xs">be the first to leave one.</p>
+      {loading ? (
+        <div>
+          {[...Array(6)].map((_, i) => <SkeletonCard key={i} />)}
+        </div>
+      ) : thoughts.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "80px 0" }}>
+          <p style={{ color: "rgba(255,255,255,0.20)", fontSize: 14, margin: 0 }}>
+            no thoughts yet tonight.
+          </p>
+          <p style={{ color: "rgba(255,255,255,0.12)", fontSize: 12, marginTop: 8 }}>
+            be the first.
+          </p>
+        </div>
+      ) : (
+        <div>
+          {thoughts.map((t, i) => (
+            <ThoughtCard key={t.id} thought={t} index={i} />
+          ))}
         </div>
       )}
 
-      {/* Feed */}
-      <div>
-        {thoughts.map((thought, i) => (
-          <ThoughtCard key={thought.id} thought={thought} index={i} />
-        ))}
-      </div>
-
-      {/* Submit button — fixed at bottom */}
-      <div className="fixed bottom-8 left-0 right-0 flex justify-center z-20">
+      {/* Submit button */}
+      <div style={{
+        position: "fixed",
+        bottom: 36,
+        left: 0,
+        right: 0,
+        display: "flex",
+        justifyContent: "center",
+        zIndex: 20,
+      }}>
         <button
           onClick={() => setShowModal(true)}
-          className="group flex items-center gap-2.5 px-5 py-3 rounded-full border border-[#1c1f2e] bg-[#07080f]/80 backdrop-blur-md text-[#4a5068] hover:text-[#e4dfd6] hover:border-[#7c6af7]/40 transition-all duration-300 text-xs tracking-wide cursor-pointer"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            padding: "12px 22px",
+            borderRadius: 100,
+            border: "1px solid rgba(255,255,255,0.10)",
+            background: "rgba(10,11,20,0.85)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            color: "rgba(255,255,255,0.45)",
+            fontSize: 12,
+            letterSpacing: "0.05em",
+            cursor: "pointer",
+            transition: "all 0.25s",
+          }}
+          onMouseEnter={e => {
+            const el = e.currentTarget as HTMLElement;
+            el.style.color = "rgba(255,255,255,0.80)";
+            el.style.borderColor = "rgba(168,148,255,0.35)";
+          }}
+          onMouseLeave={e => {
+            const el = e.currentTarget as HTMLElement;
+            el.style.color = "rgba(255,255,255,0.45)";
+            el.style.borderColor = "rgba(255,255,255,0.10)";
+          }}
         >
-          <span className="w-1 h-1 rounded-full bg-[#7c6af7] opacity-60 group-hover:opacity-100 group-hover:shadow-[0_0_8px_rgba(124,106,247,0.8)] transition-all" />
+          <span style={{
+            width: 5,
+            height: 5,
+            borderRadius: "50%",
+            background: "rgba(168,148,255,0.6)",
+            boxShadow: "0 0 8px rgba(168,148,255,0.4)",
+            flexShrink: 0,
+          }} />
           leave a thought
         </button>
       </div>
 
       {showModal && (
-        <SubmitModal
-          onClose={() => setShowModal(false)}
-          onSubmitted={handleSubmitted}
-        />
+        <SubmitModal onClose={() => setShowModal(false)} onSubmitted={handleSubmitted} />
       )}
     </>
   );

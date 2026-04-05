@@ -1,108 +1,49 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #07080f;
-  --color-surface: #0e1018;
-  --color-border: #1c1f2e;
-  --color-text-primary: #e4dfd6;
-  --color-text-muted: #4a5068;
-  --color-text-dim: #2a2f45;
-  --color-accent: #7c6af7;
-  --color-accent-glow: rgba(124, 106, 247, 0.15);
   --font-sans: var(--font-geist-sans);
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-html {
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
   background: #07080f;
-}
-
-body {
-  background: #07080f;
-  color: #e4dfd6;
+  color: rgba(255,255,255,0.82);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 0px;
-}
+::-webkit-scrollbar { width: 0; }
 
-/* Stars background */
-.stars {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 0;
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+.fade-up { animation: fade-up 0.5s ease-out forwards; }
 
-.star {
-  position: absolute;
-  border-radius: 50%;
-  background: #e4dfd6;
-  animation: twinkle var(--duration, 4s) ease-in-out infinite;
-  animation-delay: var(--delay, 0s);
-}
-
-@keyframes twinkle {
-  0%, 100% { opacity: var(--min-opacity, 0.1); }
-  50% { opacity: var(--max-opacity, 0.4); }
-}
-
-/* Same button pulse */
-@keyframes same-pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.4); }
+@keyframes same-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.5); }
   100% { transform: scale(1); }
 }
+.same-pop { animation: same-pop 0.28s ease-out; }
 
-.same-pulse {
-  animation: same-pulse 0.3s ease-out;
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.6s infinite;
+  border-radius: 6px;
 }
 
-/* Thought card fade in */
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
-.fade-up {
-  animation: fade-up 0.5s ease-out forwards;
-}
-
-/* Modal backdrop */
-@keyframes backdrop-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.backdrop-in {
-  animation: backdrop-in 0.2s ease-out forwards;
-}
-
-/* Modal slide up */
-@keyframes modal-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.modal-up {
-  animation: modal-up 0.25s ease-out forwards;
-}
+.modal-in { animation: modal-in 0.22s ease-out forwards; }
