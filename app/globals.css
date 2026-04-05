@@ -4,46 +4,46 @@
   --font-sans: var(--font-geist-sans);
 }
 
-* { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  min-height: 100%;
-  background: #07080f;
-  color: rgba(255,255,255,0.82);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+html { background: #0a0a0a; }
+
+body {
+  background: #0a0a0a;
+  color: #fff;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 ::-webkit-scrollbar { width: 0; }
 
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.fade-up { animation: fade-up 0.5s ease-out forwards; }
+.fade-up { animation: fade-up 0.4s ease-out forwards; }
 
-@keyframes same-pop {
+@keyframes pop {
   0%   { transform: scale(1); }
-  40%  { transform: scale(1.5); }
+  50%  { transform: scale(1.6); }
   100% { transform: scale(1); }
 }
-.same-pop { animation: same-pop 0.28s ease-out; }
+.pop { animation: pop 0.25s cubic-bezier(.36,.07,.19,.97); }
 
 @keyframes shimmer {
-  0%   { background-position: -400px 0; }
-  100% { background-position: 400px 0; }
+  0%   { background-position: -600px 0; }
+  100% { background-position: 600px 0; }
 }
 .skeleton {
-  background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
-  background-size: 800px 100%;
-  animation: shimmer 1.6s infinite;
-  border-radius: 6px;
+  background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%);
+  background-size: 1200px 100%;
+  animation: shimmer 1.8s infinite;
+  border-radius: 8px;
 }
 
 @keyframes modal-in {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
-.modal-in { animation: modal-in 0.22s ease-out forwards; }
+.modal-in { animation: modal-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }

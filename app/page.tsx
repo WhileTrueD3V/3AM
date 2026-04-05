@@ -3,36 +3,31 @@ import { Clock } from "@/app/components/Clock";
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen" style={{ background: "#07080f" }}>
-      {/* Ambient glow — top center */}
-      <div
-        aria-hidden
-        style={{
-          position: "fixed",
-          top: "-120px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "600px",
-          height: "400px",
-          borderRadius: "50%",
-          background: "radial-gradient(ellipse, rgba(100,80,200,0.10) 0%, transparent 70%)",
-          pointerEvents: "none",
-          zIndex: 0,
-        }}
-      />
-
-      {/* Header */}
-      <header className="relative z-10 flex items-center justify-between px-7 pt-7 pb-4 max-w-2xl mx-auto">
-        <span style={{ fontSize: 11, letterSpacing: "0.18em", color: "rgba(255,255,255,0.22)", textTransform: "uppercase" }}>
-          3am thought
+    <div style={{ minHeight: "100svh", background: "#0a0a0a", display: "flex", flexDirection: "column" }}>
+      {/* Nav */}
+      <nav style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "18px 20px",
+        borderBottom: "1px solid #1a1a1a",
+        position: "sticky",
+        top: 0,
+        background: "rgba(10,10,10,0.92)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        zIndex: 30,
+      }}>
+        <span style={{ fontSize: 15, fontWeight: 600, color: "#fff", letterSpacing: "-0.01em" }}>
+          3AM
         </span>
         <Clock />
-      </header>
+      </nav>
 
       {/* Feed */}
-      <div className="relative z-10 max-w-2xl mx-auto px-7 pb-36">
+      <main style={{ flex: 1, maxWidth: 560, width: "100%", margin: "0 auto", padding: "0 16px 120px" }}>
         <ThoughtFeed />
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }

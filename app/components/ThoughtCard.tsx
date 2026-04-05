@@ -1,23 +1,14 @@
 "use client";
-
 import { useState, useCallback } from "react";
 
-type Thought = {
-  id: string;
-  content: string;
-  sameCount: number;
-  createdAt: string;
-  hasSamed: boolean;
-};
+type Thought = { id: string; content: string; sameCount: number; createdAt: string; hasSamed: boolean };
 
-function timeAgo(dateStr: string) {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  return `${Math.floor(hrs / 24)}d ago`;
+function timeAgo(d: string) {
+  const s = Math.floor((Date.now() - new Date(d).getTime()) / 1000);
+  if (s < 60) return "just now";
+  if (s < 3600) return `${Math.floor(s / 60)}m ago`;
+  if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
+  return `${Math.floor(s / 86400)}d ago`;
 }
 
 export function ThoughtCard({ thought, index }: { thought: Thought; index: number }) {
@@ -30,7 +21,7 @@ export function ThoughtCard({ thought, index }: { thought: Thought; index: numbe
     setSamed(true);
     setCount(c => c + 1);
     setPopping(true);
-    setTimeout(() => setPopping(false), 280);
+    setTimeout(() => setPopping(false), 250);
     try {
       await fetch(`/api/thoughts/${thought.id}/same`, { method: "POST" });
     } catch {
@@ -40,27 +31,24 @@ export function ThoughtCard({ thought, index }: { thought: Thought; index: numbe
   }, [samed, thought.id]);
 
   return (
-    <article
+    <div
       className="fade-up"
       style={{
-        animationDelay: `${index * 55}ms`,
+        animationDelay: `${index * 50}ms`,
         opacity: 0,
-        padding: "28px 0",
-        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        background: "#111",
+        border: "1px solid #1e1e1e",
+        borderRadius: 16,
+        padding: "18px 20px",
+        marginTop: 10,
       }}
     >
-      <p style={{
-        color: "rgba(255,255,255,0.80)",
-        fontSize: 16,
-        lineHeight: 1.75,
-        fontWeight: 300,
-        margin: 0,
-      }}>
+      <p style={{ fontSize: 15, lineHeight: 1.65, color: "#f0f0f0", fontWeight: 400 }}>
         {thought.content}
       </p>
 
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 16 }}>
-        <span style={{ fontSize: 10, letterSpacing: "0.14em", color: "rgba(255,255,255,0.22)", textTransform: "uppercase" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 14 }}>
+        <span style={{ fontSize: 12, color: "#444" }}>
           {timeAgo(thought.createdAt)}
         </span>
 
@@ -70,35 +58,33 @@ export function ThoughtCard({ thought, index }: { thought: Thought; index: numbe
           style={{
             display: "flex",
             alignItems: "center",
-            gap: 7,
-            background: "none",
-            border: "none",
-            padding: "4px 0",
+            gap: 6,
+            background: samed ? "rgba(251,191,36,0.1)" : "rgba(255,255,255,0.04)",
+            border: `1px solid ${samed ? "rgba(251,191,36,0.25)" : "rgba(255,255,255,0.08)"}`,
+            borderRadius: 100,
+            padding: "5px 12px 5px 10px",
             cursor: samed ? "default" : "pointer",
-            color: samed ? "rgba(168,148,255,0.9)" : "rgba(255,255,255,0.28)",
-            fontSize: 11,
-            letterSpacing: "0.04em",
-            transition: "color 0.2s",
+            transition: "all 0.2s",
+            color: samed ? "#FBBF24" : "#555",
+            fontSize: 12,
+            fontFamily: "inherit",
           }}
-          onMouseEnter={e => { if (!samed) (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.55)" }}
-          onMouseLeave={e => { if (!samed) (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.28)" }}
         >
           <span
-            className={popping ? "same-pop" : ""}
+            className={popping ? "pop" : ""}
             style={{
               display: "inline-block",
-              width: 6,
-              height: 6,
-              borderRadius: "50%",
-              background: samed ? "#a894ff" : "rgba(255,255,255,0.22)",
-              boxShadow: samed ? "0 0 10px rgba(168,148,255,0.55)" : "none",
-              transition: "all 0.25s",
-              flexShrink: 0,
+              fontSize: 13,
+              lineHeight: 1,
+              filter: samed ? "none" : "grayscale(1) opacity(0.4)",
+              transition: "filter 0.2s",
             }}
-          />
+          >
+            ✦
+          </span>
           {count > 0 ? `${count} felt this` : "same"}
         </button>
       </div>
-    </article>
+    </div>
   );
 }
